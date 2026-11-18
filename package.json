@@ -1,0 +1,25 @@
+{
+	"name": "qravate-zapier",
+	"version": "0.1.0",
+	"description": "Zapier integration for QRavate dynamic QR codes.",
+	"private": true,
+	"license": "MIT",
+	"homepage": "https://github.com/QRavate/zapier#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/QRavate/zapier.git"
+	},
+	"main": "index.js",
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"test": "node --test test/*.test.js"
+	},
+	"dependencies": {
+		"zapier-platform-core": "19.3.0"
+	},
+	"devDependencies": {
+		"nock": "^14.0.0"
+	}
+}

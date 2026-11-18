@@ -1,0 +1,35 @@
+name: Contract test
+
+# Checks every week that the QRavate API still answers the calls this connector makes.
+# Needs the QRAVATE_API_KEY and QRAVATE_TEST_QR_ID secrets (dedicated test workspace); skipped without them.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - run: node scripts/contract-test.mjs
+        env:
+          QRAVATE_API_KEY: ${{ secrets.QRAVATE_API_KEY }}
+          QRAVATE_TEST_QR_ID: ${{ secrets.QRAVATE_TEST_QR_ID }}
+      - name: Open an issue on failure
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list --label contract-test --state open --json number --jq '.[0].number' | grep -q . && exit 0
+          gh label create contract-test --color B60205 --force
+          gh issue create --label contract-test \
+            --title "Weekly contract test failed" \
+            --body "The QRavate API no longer answers a call this connector makes: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

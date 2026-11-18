@@ -1,0 +1,29 @@
+name: Deploy to Zapier
+
+# Pushes a new version of the integration to Zapier on every version tag (e.g. 0.2.0).
+# Needs .zapierapprc (created by `zapier register`, committed) and the ZAPIER_DEPLOY_KEY secret
+# (Zapier developer platform → Settings → Deploy Keys). A pushed version is private until promoted.
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      - name: Check that the tag matches package.json
+        run: test "$(node -p 'require("./package.json").version')" = "${GITHUB_REF_NAME}"
+      - run: npx --yes zapier-platform-cli@19.3.0 push
+        env:
+          ZAPIER_DEPLOY_KEY: ${{ secrets.ZAPIER_DEPLOY_KEY }}
