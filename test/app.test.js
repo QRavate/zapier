@@ -2,7 +2,7 @@
 
 const { test, before, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
-const nock = require('nock');
+const nock = require('nock').default;
 const zapier = require('zapier-platform-core');
 const { prepareApp, validateApp } = require('zapier-platform-core/src/tools/schema');
 
