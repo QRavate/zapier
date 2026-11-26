@@ -20,6 +20,6 @@
 		"zapier-platform-core": "19.3.0"
 	},
 	"devDependencies": {
-		"nock": "^14.0.0"
+		"nock": "^15.0.6"
 	}
 }
